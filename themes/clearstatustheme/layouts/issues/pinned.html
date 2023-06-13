@@ -1,0 +1,20 @@
+{{ $severityBgColor := .Site.Params.DownSeverityBackground }}
+{{ $severityColor := .Site.Params.DownSeverityColor }}
+
+{{ $dateFormat := "January 2, 2006 at 3:04 PM" }}
+{{ if .Site.Params.dateFormat }}
+{{ $dateFormat = .Site.Params.dateFormat }}
+{{ end }}
+
+<div class="max-w-lg w-full lg:flex shadow-md {{ .Site.Params.SmallBodyColor }} rounded flex flex-col justify-between leading-normal text-sm mb-4">
+
+    <div class="{{ $severityBgColor }} rounded-t flex items-center px-4 py-2 justify-between">
+       <span class="py-1 {{ $severityColor }}">{{ .Title }}</span>
+    </div>
+
+    <div class="{{ .Site.Params.SmallBodyBackground }} px-4">
+        <div class="my-4">{{ .Content | safeHTML }}</div>
+    </div>
+
+
+</div>

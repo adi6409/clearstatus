@@ -1,0 +1,23 @@
+{{ partial "custom/above-footer" . }}
+<div class="w-full px-4 py-6 {{ .Site.Params.FooterBackground }} {{ .Site.Params.FooterColor }}">
+    <div class="max-w-sm mx-auto text-center">
+        {{ if .Site.Params.description_footer }}
+        <p class="my-4">{{ .Site.Params.description_footer | safeHTML }}</p>
+        {{ end }}
+
+        <p>
+            <small>
+                <a class="{{ .Site.Params.FooterColor }}" href="#">{{ T "backToTop" }}</a>
+                {{ with $.Site.Home.OutputFormats.Get "rss" }}
+                &nbsp;•&nbsp;<a class="{{ $.Site.Params.FooterColor }}" href="{{ .Permalink }}">{{ T "rss" }}</a>
+                {{ end }}
+            </small>
+        </p>
+
+        {{ with .Site.Params.CopyrightHolder}}
+        <p class="my-4">{{ now.Year }} &copy; {{ . }}</p>
+        {{ end }}
+
+    </div>
+</div>
+{{ partial "custom/below-footer" . }}

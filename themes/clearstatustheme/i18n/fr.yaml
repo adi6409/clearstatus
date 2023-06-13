@@ -1,0 +1,105 @@
+############################################################
+## English language file
+############################################################
+
+- id: languageCode
+  translation: fr
+- id: languageName
+  translation: Français
+- id: languageNameShort
+  translation: FRA
+
+- id: autoRefreshNotice
+  translation: Mise à jour dans&nbsp;<span id="js-cls-reload-countdown">{{ .secondsLeft }}</span>&nbsp;secondes
+- id: autoRefreshTitle
+  translation: Cliquez pour rafraîchir la page
+
+- id: rss
+  translation: Abonnement RSS
+
+# Summary status message
+- id: scheduled
+  translation: Planifiée
+
+- id: isDown
+  translation: Panne en cours...
+- id: isDisrupted
+  translation: Perturbations en cours...
+- id: isMonitoring
+  translation: Systèmes sous surveillance...
+- id: isMaintenance
+  translation: Systèmes en maintenance...
+- id: isOk
+  translation: Tous systèmes fonctionnels.
+
+# Components list status
+- id: disrupted
+  translation: Perturbé
+- id: down
+  translation: En panne
+- id: ok
+  translation: Normal
+- id: monitoring
+  translation: Surveillance
+- id: maintenance
+  translation: Maintenance
+
+# Events
+- id: incidentHistory
+  translation: Historique
+
+- id: resolved
+  translation: Résolu
+- id: inUnderAMinute
+  translation: moins d'une minute
+
+- id: noEventsTitle
+  translation: Aucun évènement enregistré.
+- id: noEventsDesc
+  translation: Nous n'avons enregistré aucun évènement à ce jour!
+
+- id: prev
+  translation: Plus anciens
+- id: next
+  translation: Plus récents
+
+##
+## OTHER
+##
+
+- id: goBack
+  translation: Revenir à
+- id: backToTop
+  translation: Haut de page
+- id: backToList
+  translation: Retour à la liste
+
+- id: notFound
+  translation: Impossible de trouver cette page.
+- id: notFoundText
+  translation: Nous avons peut-être déplacé ou supprimé cette page. Désolés du dérangement!
+
+- id: rss
+  translation: S'abonner par RSS
+
+- id: rss
+  translation: S'abonner par RSS
+
+- id: willBe
+  translation: sera
+- id: willBePlural
+  translation: seront
+- id: was
+  translation: etait
+- id: were
+  translation: etaient
+- id: is
+  translation: est
+- id: are
+  translation: sont
+
+# This string will be displayed after each time displayed
+# Set it for instance to " UTC" to indicate UTC times
+# or a specific time zone, ie " America/New_York"
+#- id: timezoneString
+#  translation: ""

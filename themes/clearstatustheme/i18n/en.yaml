@@ -1,0 +1,99 @@
+############################################################
+## English language file
+############################################################
+
+- id: languageCode
+  translation: en
+- id: languageName
+  translation: English
+- id: languageNameShort
+  translation: ENG
+
+- id: autoRefreshNotice
+  translation: Page will refresh in&nbsp;<span id="js-cls-reload-countdown">{{ .secondsLeft }}</span>&nbsp;seconds
+- id: autoRefreshTitle
+  translation: Click to refresh page now
+
+- id: rss
+  translation: Subscribe via RSS
+
+# Summary status message
+- id: scheduled
+  translation: Scheduled
+
+- id: isDown
+  translation: Something's happening here...
+- id: isDisrupted
+  translation: Having a little bit of trouble...
+- id: isMonitoring
+  translation: Some systems being monitored...
+- id: isMaintenance
+  translation: Some systems under maintenance...
+- id: isOk
+  translation: All systems operational.
+
+# Components list status
+- id: disrupted
+  translation: Disrupted
+- id: down
+  translation: Down
+- id: ok
+  translation: Up and running
+- id: monitoring
+  translation: Monitored
+- id: maintenance
+  translation: Maintenance
+
+# Events
+- id: incidentHistory
+  translation: Past events
+
+- id: resolved
+  translation: Resolved
+- id: inUnderAMinute
+  translation: in under a minute
+
+- id: noEventsTitle
+  translation: No event to be reported.
+- id: noEventsDesc
+  translation: This status page has not logged any incident so far!
+
+- id: prev
+  translation: More recent
+- id: next
+  translation: Older
+
+##
+## OTHER
+##
+
+- id: goBack
+  translation: Go back to
+- id: backToTop
+  translation: Back to top
+- id: backToList
+  translation: Back to event list
+
+- id: notFound
+  translation: We could not find this page.
+- id: notFoundText
+  translation: We may have moved this page to another address or deleted it altogether. Sorry about the trouble!
+
+- id: willBe
+  translation: will be
+- id: willBePlural
+  translation: will be
+- id: was
+  translation: was
+- id: were
+  translation: were
+- id: is
+  translation: is
+- id: are
+  translation: are
+
+# This string will be displayed after each time displayed
+# Set it for instance to " UTC" to indicate UTC times
+# or a specific time zone, ie " America/New_York"
+#- id: timezoneString
+#  translation: ""

@@ -1,0 +1,102 @@
+############################################################
+## English language file
+############################################################
+
+- id: languageCode
+  translation: es
+- id: languageName
+  translation: Español
+- id: languageNameShort
+  translation: ESP
+
+- id: autoRefreshNotice
+  translation: Actualizada en&nbsp;<span id="js-cls-reload-countdown">{{ .secondsLeft }}</span>&nbsp;segundos
+- id: autoRefreshTitle
+  translation: Haga clic para actualizar la página
+
+- id: rss
+  translation: Suscribirse con rss
+
+# Summary status message
+- id: scheduled
+  translation: Planificado
+
+- id: isDown
+  translation: Incidencia en curso...
+- id: isDisrupted
+  translation: Sistemas perturbados...
+- id: isMonitoring
+  translation: Sistemas monitoreados...
+- id: isMaintenance
+  translation: Algunos sistemas en mantenimiento...
+- id: isOk
+  translation: Todos sistema operativos.
+
+# Components list status
+- id: disrupted
+  translation: Perturbado
+- id: down
+  translation: No funciona
+- id: ok
+  translation: Operativo
+- id: monitoring
+  translation: Monitoreado
+- id: maintenance
+  translation: Mantenimiento
+
+# Events
+- id: incidentHistory
+  translation: Historial
+
+- id: resolved
+  translation: Resuelto
+- id: inUnderAMinute
+  translation: menos de 1 min
+
+- id: noEventsTitle
+  translation: No hay evento que reportar.
+- id: noEventsDesc
+  translation: Esta página de estado no ha registrado ningún incidente hasta el momento!
+
+- id: prev
+  translation: Anterior
+- id: next
+  translation: Siguiente
+
+##
+## OTHER
+##
+
+- id: goBack
+  translation: Volver a
+- id: backToTop
+  translation: Volver arriba
+- id: backToList
+  translation: Volver a lista de eventos
+
+- id: notFound
+  translation: No pudimos encontrar esta página.
+- id: notFoundText
+  translation: Es posible que hayamos movido esta página a otra dirección o la hemos eliminado. Lo siento por el problema!
+
+- id: rss
+  translation: Suscríbete vía RSS
+
+- id: willBe
+  translation: sera
+- id: willBePlural
+  translation: seran
+- id: was
+  translation: ha sido
+- id: werz
+  translation: han sido
+- id: is
+  translation: es
+- id: are
+  translation: estan
+
+# This string will be displayed after each time displayed
+# Set it for instance to " UTC" to indicate UTC times
+# or a specific time zone, ie " America/New_York"
+#- id: timezoneString
+#  translation: ""

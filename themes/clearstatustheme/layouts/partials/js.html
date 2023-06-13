@@ -1,0 +1,38 @@
+<script type="text/javascript">
+    var msecondsBeforeReloads = 120000
+    var lastReload = new Date();
+    var reloadCountDownElement = document.getElementById('js-cls-reload-countdown')
+    reloadCountDownElement.textContent = Math.round(msecondsBeforeReloads / 1000)
+
+    window.setInterval(function () {
+        var now = new Date();
+        var msecondsLeft = now - lastReload
+        if (msecondsLeft > msecondsBeforeReloads) {
+            location.reload();
+        } else {
+            reloadCountDownElement.textContent = Math.round((120000 - msecondsLeft) / 1000)
+        }
+
+    }, 5000)
+
+    var pastEvents = document.querySelectorAll('.cls-past-event-content')
+    pastEvents.forEach(
+        function (contentElement) {
+            if (contentElement.scrollHeight > contentElement.clientHeight) {
+                // show readmore
+                contentElement.classList.add('cls-overflowing')
+            }
+        }
+    )
+
+    document.addEventListener(
+        'click',
+        function (event) {
+            if (event.target.matches('.cls-read-more')) {
+                event.target.parentNode.previousElementSibling.classList.add('cls-expanded')
+            }
+        }
+    )
+
+</script>
+

@@ -1,0 +1,74 @@
+{{ $systemsCount := 0 }}
+
+{{ range $index, $item := .context.Site.Params.systems }}
+    {{ $systemsCount = $index }}
+{{ end }}
+
+{{ $baseIcon := "<svg class='fill-current %s' role='img' xmlns='http://www.w3.org/2000/svg' width='32' viewBox='0 0 512 512' aria-labelledby='system_%d'><title id='system_%d'>%s</title>%s</svg>"}}
+
+{{ $icons := (dict "ok" "<path d='M256 48C141.6 48 48 141.6 48 256s93.6 208 208 208 208-93.6 208-208S370.4 48 256 48zm-42.7 318.9L106.7 260.3l29.9-29.9 76.8 76.8 162.1-162.1 29.9 29.9-192.1 191.9z'/>" "down" "<path d='M256 48C140.559 48 48 140.559 48 256c0 115.436 92.559 208 208 208 115.435 0 208-92.564 208-208 0-115.441-92.564-208-208-208zm104.002 282.881l-29.12 29.117L256 285.117l-74.881 74.881-29.121-29.117L226.881 256l-74.883-74.881 29.121-29.116L256 226.881l74.881-74.878 29.12 29.116L285.119 256l74.883 74.881z'/>" "disrupted" "<path d='M170.718 216.482L141.6 245.6l93.6 93.6 208-208-29.118-29.118L235.2 279.918l-64.482-63.436zM422.4 256c0 91.518-74.883 166.4-166.4 166.4S89.6 347.518 89.6 256 164.482 89.6 256 89.6c15.6 0 31.2 2.082 45.764 6.241L334 63.6C310.082 53.2 284.082 48 256 48 141.6 48 48 141.6 48 256s93.6 208 208 208 208-93.6 208-208h-41.6z'/>" "monitoring" "<path d='M428 269c-21.5 0-40.6 13.1-48.4 33h-41.2L307 221.3c-2.7-8.2-10.3-13.7-19-13.7h-.4c-8.8.2-16.4 6-18.8 14.5l-33.6 135.4-55.5-291.8C178 55.6 169.6 48 160 48c-9.5 0-16.9 6.2-19.4 16.2L90.3 302H32v40h74c9.2 0 17.2-6.2 19.4-15.2l30.7-160.6 54.1 282.1c1.5 8.8 8.9 15.1 18.6 15.7h1.2c9.3 0 16.9-5.3 19.2-13.5l40.2-162.9 15.5 40.7c2.7 8.2 10.3 13.7 19 13.7h56.4c8.3 19 27.1 31 47.6 31 13.9 0 26.9-5.6 36.8-15.8 9.8-10.1 15.2-23.3 15.2-37.2.1-28.6-22.7-51-51.9-51z'/>" "maintenance" "<path d='M430.9 393.4l-119.6-119-58.1-57.9-13.4-13.3c15.9-40.6 7.1-88.2-26.6-121.7-35.4-35.3-88.5-42.3-131-22.9l76.1 75.8-53.1 52.9-77.9-75.8C6.2 153.8 15 206.7 50.4 242c33.6 33.5 81.4 42.3 122.1 26.5l14.4 14.3L81.7 388c-7.6 5.7-7.6 19 1.9 26.6l43.8 43.7c7.6 7.6 19.1 7.6 26.7 0l96.1-112.4 113.4 112.9c7.1 7.1 17.7 7.1 24.8 0l40.7-40.6c8.9-7.1 8.9-19.5 1.8-24.8z'/><path d='M494.4 216.6l-34.5-34.1c-2.2-2.2-5.8-2.2-8 0l-3.7 3.7-18.5-15.8s1.2-10-4.9-18.7c-6.2-8.7-16.1-19.8-23.2-26.9-7.1-7-34.1-33.9-69.7-51.4C296.2 55.7 271 48 241 48v29.7s28.7 16.6 45.1 29.7c16.3 13.1 16.8 59.5 16.8 59.5l-28.5 28.5 56.5 56.1 31-36.3c12.9-3.5 23.8-3.8 30.2-.3l13.7 13.3-9.6 9.5c-2.2 2.2-2.2 5.7 0 7.9l34.5 34.1c2.2 2.2 5.8 2.2 8 0l55.7-55.2c2.1-2.2 2.1-5.8 0-7.9z'/>")}}
+
+{{ $borderType := "border-b"}}
+
+{{ range $index, $el := .context.Site.Params.systems }}
+
+    {{ $activeComponentIssues := where $.active "Params.affected" "intersect" (slice .name) }}
+
+    {{ $thisIsMaintenance := where $activeComponentIssues "Params.current_severity" "=" "maintenance" }}
+    {{ $thisIsMonitoring := where $activeComponentIssues "Params.current_severity" "=" "monitoring" }}
+    {{ $thisIsDisrupted := where $activeComponentIssues "Params.current_severity" "=" "disrupted" }}
+    {{ $thisIsDown := where $activeComponentIssues "Params.current_severity" "=" "down" }}
+    {{ $thisIsOk := where $activeComponentIssues "Params.current_severity" "=" "ok" }}
+
+    {{ $currentSeverity := "ok"}}
+    {{ $currentSeverityColor := "text-green-dark"}}
+    {{ if $thisIsDown }}
+        {{ $currentSeverity = "down"}}
+        {{ $currentSeverityColor = "text-red-dark"}}
+    {{ else if $thisIsDisrupted}}
+        {{ $currentSeverity = "disrupted"}}
+        {{ $currentSeverityColor = "text-orange-dark"}}
+    {{ else if $thisIsMonitoring}}
+        {{ $currentSeverity = "monitoring"}}
+        {{ $currentSeverityColor = "text-orange"}}
+    {{ else if $thisIsMaintenance}}
+        {{ $currentSeverity = "maintenance"}}
+        {{ $currentSeverityColor = "text-grey-darkest"}}
+    {{ end}}
+
+    {{ $iconPath := index $icons $currentSeverity }}
+    {{ $translatedSeverity := T $currentSeverity }}
+    {{ $visibleSeverity := "" }}
+    {{ if ne $currentSeverity "ok" }}
+    {{ $visibleSeverity = $translatedSeverity }}
+    {{ end }}
+
+    {{ $icon := printf $baseIcon $currentSeverityColor $index $index $translatedSeverity $iconPath }}
+
+    {{ if eq $systemsCount $index}}
+        {{ $borderType = ""}}
+    {{ end }}
+    <div class="w-full table-row bg-transparent {{ $borderType }} {{ $.context.Site.Params.ComponentsBorders }} p-4">
+        <div class="table-cell align-middle p-4">
+            {{ if .link }}
+            <a class="{{ $.context.Site.Params.ComponentsColor }} no-underline" href="{{ .link }}">
+                <p class="text-lg font-semibold">
+                    {{ .name }}
+                    <svg aria-hidden="true" class="fill-current md:ml-3 align-bottom" xmlns="http://www.w3.org/2000/svg"  width="18" viewBox="0 0 512 512"><path d="M74.6 256c0-38.3 31.1-69.4 69.4-69.4h88V144h-88c-61.8 0-112 50.2-112 112s50.2 112 112 112h88v-42.6h-88c-38.3 0-69.4-31.1-69.4-69.4zm85.4 22h192v-44H160v44zm208-134h-88v42.6h88c38.3 0 69.4 31.1 69.4 69.4s-31.1 69.4-69.4 69.4h-88V368h88c61.8 0 112-50.2 112-112s-50.2-112-112-112z"/></svg>
+                </p>
+                <p class="text-sm text-grey-darkest">{{ .description }}</p>
+            </a>
+            {{ else }}
+            <p class="text-lg font-semibold">{{ .name }}</p>
+            <p class="text-sm text-grey-darkest">{{ .description }}</p>
+            {{ end }}
+        </div>
+
+        <div class="table-cell text-center align-middle px-4">
+            {{ $icon | safeHTML }}
+            {{ if $visibleSeverity }}
+            <div class="text-xs text-grey-darkest mt-2">{{ $visibleSeverity }}</div>
+            {{ end }}
+        </div>
+    </div>
+{{ end }}

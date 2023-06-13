@@ -1,0 +1,14 @@
+{{ partial "meta" . }}
+
+<body class="{{ .Site.Params.BodyBackground }}">
+{{ partial "header" . }}
+
+<div class="max-w-md w-full mx-auto border {{ .Site.Params.BordersColor }} rounded leading-normal p4 mt-8 mb-8">
+    <h1 class="bold">{{ T "notFound" }}</h1>
+    <p>{{ T "notFoundText" }}</p>
+</div>
+
+{{ partial "js" . }}
+{{ partial "footer" . }}
+</body>
+</html>

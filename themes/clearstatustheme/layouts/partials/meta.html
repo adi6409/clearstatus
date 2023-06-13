@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {{ with .Site.Params.icon }}
+    <link rel="icon" type="{{ $.Site.Params.iconType }}" href="{{ . }}" />
+    {{ end }}
+    {{ $description := "" }}
+    {{ if eq .Kind "home" }}
+      {{ with $.Site.Params.Meta_description }}
+        {{ $description = . }}
+      {{ else }}
+        {{ $description = .Summary }}
+      {{ end }}
+    {{ else }}
+      {{ $description = .Summary }}
+    {{ end}}
+
+    <meta name="description" content="{{ $description }}">
+    <title>{{ if eq  .Title  .Site.Title }}{{ .Site.Title }}{{ else }}{{ with .Title }}{{.}} — {{ end }}{{ .Site.Title }}{{ end }}</title>
+
+    <link rel="canonical" href="{{ .Permalink }}">
+
+    {{ with $.Site.Home.OutputFormats.Get "rss" }}
+    <link rel="alternate" type="application/rss+xml" title="{{ $.Site.Title }}" href="{{ .Permalink }}" />
+    {{ end }}
+    {{ if .Site.IsMultiLingual }}
+        {{ range .AllTranslations }}
+        <link href="{{ .Permalink }}" rel="alternate" hreflang="{{ .Lang }}" />
+        {{ end }}
+    {{ end }}
+
+      <style>
+          {{ if .Site.Params.EnablePostCSSProcessing }}
+              {{ $postCssOpts := (dict "config" .Site.Params.PostCSSConfigFolder "noMap" true) }}
+              {{ with resources.Get .Site.Params.FullCSSSourceFile | postCSS $postCssOpts }}
+              {{ .Content | safeCSS }}
+              {{ end }}
+          {{ else }}
+              {{ with resources.Get .Site.Params.FullCSSDistFile }}
+              {{ .Content | safeCSS }}
+              {{ end }}
+          {{ end }}
+      </style>
+
+    {{ if .Site.Params.EnableNetlifyCMSSupport }}
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    {{ end }}
+
+    {{ partial "custom/meta" . }}
+  </head>

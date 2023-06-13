@@ -1,0 +1,50 @@
+{{ partial "custom/above-header" . }}
+{{ if .Site.IsMultiLingual }}
+<div class="text-sm mb-4">
+    <ul class="list-reset flex justify-center">
+        {{ if .IsTranslated -}}
+        {{ range .Translations }}
+        <li class="px-4">
+            <a class="{{ $.Site.Params.headerColor }}" href="{{ .RelPermalink }}" lang="{{ .Lang }}">{{ .Site.Language.Params.LanguageName }}</a>
+        </li>
+        {{ end -}}
+        {{ else -}}
+        {{ range .Site.Languages -}}
+        {{ if ne $.Site.Language.Lang .Lang }}
+        <li class="px-4">
+            <a class="{{ $.Site.Params.headerColor }}" href="/{{ .Lang }}" lang="{{ .Lang }}">{{ .Params.LanguageName }}</a>
+        </li>
+        {{ end -}}
+        {{ end -}}
+        {{ end -}}
+    </ul>
+
+</div>
+{{ end }}
+
+<div class="w-full {{ .Site.Params.HeaderBackground }} {{ .Site.Params.HeaderColor }} mb-8">
+    {{ if .Site.Params.logo }}
+    <div class="w-full max-w-lg mx-auto md:flex items-center justify-between px-4 py-6">
+        <a href="{{ $.Site.BaseURL }}" class="no-underline flex-no-shrink max-w-xs w-1/3">
+            <div class="text-center"><img class="max-w-xs md:w-1/2 w-1/5" src="{{ .Site.Params.logo }}" alt="{{ $.Site.Title }}"></div>
+        </a>
+        {{ else }}
+        <div class="w-full max-w-lg mx-auto md:flex items-center justify-center px-4 py-6 text-center">
+            {{ end }}
+
+            <div class="text-center leading-normal px-4">
+                <h1 class="text-xl mt-2 md:mt-0">{{ .Site.Title }}</h1>
+                {{ $rssLink := "" }}
+                {{ with $.Site.Home.OutputFormats.Get "rss" }}
+                {{ $rssLink = .Permalink }}
+                {{ end }}
+                {{ with .Site.Params.description_header }}
+                <p class="text-sm mt-2">{{ printf . $rssLink | safeHTML }}</p>
+                {{ end }}
+            </div>
+
+        </div>
+
+    </div>
+
+    {{ partial "custom/below-header" . }}

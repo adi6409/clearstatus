@@ -1,0 +1,200 @@
+# Netlify CMS configuration for use with ClearStatus
+backend:
+  name: git-gateway
+  branch: master
+
+# This line should *not* be indented
+media_folder: "static/images/uploads" # Media files will be stored in the repo under static/images/uploads
+public_folder: "/images/uploads" # The src attribute for uploaded media will begin with /images/uploads
+
+## Content definition
+collections:
+  - name: "issue"
+    label: "Events"
+    folder: "content/default/issues"
+    create: true
+    slug: "{{ .Site.Params.NetlifySlug }}"
+    fields:
+      - {label: "Section", name: "section", widget: "hidden", default: "issue"}
+      - {label: "Title", name: "title", widget: "string", hint: "A short descriptive title for the event."}
+      - {label: "Date", name: "date", widget: "datetime", hint: "The date and time at which the event started or is scheduled."}
+      - label: "Status"
+        name: "status"
+        hint: "The current state of the affected systems."
+        widget: "select"
+        default: "in_progress"
+        options:
+          - { label: "Resolved", value: "resolved" }
+          - { label: "In progress", value: "in_progress" }
+          - { label: "Scheduled", value: "scheduled" }
+      - label: "Pinned"
+        name: "pinned"
+        required: false
+        hint: "This item will be taken out of the flow of events and displayed at top of page or below the header as long as its status is marked as in_progress"
+        widget: "select"
+        default: ""
+        options:
+          - { label: "Not pinned", value: "" }
+          - { label: "Top of page", value: "top" }
+          - { label: "Just below the header", value: "belowheader" }
+      - label: "Current severity"
+        name: "current_severity"
+        hint: "How severe is the event for the affected systme right now."
+        widget: "select"
+        default: "down"
+        options:
+          - { label: "Up", value: "ok" }
+          - { label: "Disrupted", value: "disrupted" }
+          - { label: "Down", value: "down" }
+          - { label: "Monitoring", value: "monitoring" }
+          - { label: "Maintenance", value: "maintenance" }
+      - label: "Max severity"
+        name: "max_severity"
+        hint: "What was the maximum severity of the event until its resolution. Used when the event is displayed in the Past events section."
+        widget: "select"
+        default: "down"
+        options:
+          - { label: "Up", value: "ok" }
+          - { label: "Disrupted", value: "disrupted" }
+          - { label: "Down", value: "down" }
+          - { label: "Monitoring", value: "monitoring" }
+          - { label: "Maintenance", value: "maintenance" }
+      - label: "Duration"
+        name: "duration"
+        required: false
+        hint: "Expected duration for the event. Only used for <scheduled> events. This is free text: ie 5mn, 1h, 1 hour,.."
+        widget: "string"
+        default: ""
+      - label: "Resolved on"
+        name: "resolved_on"
+        required: false
+        widget: "datetime"
+        hint: ""
+      - label: "Affected systems"
+        name: "affected"
+        hint: "Which of your systems are affected by the event. Use exact same name as in your config file."
+        widget: "select"
+        multiple: true
+        options:
+{{ range .Site.Params.Systems }}          - { label: "{{ .name }}", value: "{{ .name }}" }
+{{ end }}
+      - label: "Twitter feed"
+        name: "twitterFeed"
+        required: false
+        hint: "If set and the status is in_progress, this feed will be embedded in the event display. Leave empty for no Twitter feed."
+        widget: "string"
+        default: ""
+      - label: "Enable comments"
+        name: "enableComments"
+        hint: "Enable/disable on this page. Currently with Disqus. You need to set your Disqus short name on the Settings page for this to work."
+        widget: "boolean"
+        default: true
+      - label: "Event description"
+        name: "body"
+        required: false
+        hint: "Description of the event as it happens and what you do about it. You can come back several times and update that description."
+        widget: "markdown"
+        default: ""
+
+
+  - name: "settings"
+    label: "Settings"
+    description: "General configuration for your status page. Saving these settings will overwrite those in your git repository."
+    delete: false
+    editor:
+      preview: false
+    files:
+      - name: "main"
+        label: "Status page configuration"
+        file: "config.yml"
+        fields:
+          - label: 'Site title'
+            name: 'title'
+            hint: 'Complete page title'
+            widget: 'string'
+            default: ""
+          - label: 'Base URL'
+            required: false
+            name: 'baseURL'
+            hint: 'Base URL of your status page, such as https://status.example.com. You can usually leave this empty and the URL will be auto-detected. You should fill it in when using Disqus commenting as otherwise Disqus comment counters will not work properly.'
+            widget: 'string'
+            default: ""
+          - label: 'Language code'
+            name: 'languageCode'
+            hint: 'Language code for the status page'
+            widget: 'string'
+            default: "en"
+
+          ## User settings
+          - label: "Params"
+            name: "params"
+            widget: "object"
+            fields:
+              - label: "Systems"
+                name: "systems"
+                allow_add: true
+                widget: "list"
+                fields:
+                  - {label: "Name", name: "name", widget: string}
+                  - {label: "Description", name: "description", widget: string, required: false}
+                  - {label: "Link", name: "link", widget: string, required: false}
+              - label: 'Date format'
+                name: 'dateFormat'
+                hint: 'Format to use for full date display'
+                widget: 'string'
+                default: "January 2, 2006 at 3:04 PM"
+              - label: 'Short Date format'
+                name: 'shortDateFormat'
+                hint: 'Format to use for shorter date display'
+                widget: 'string'
+                default: "15:04 — Jan 2"
+              - label: 'Timezone string'
+                name: 'timezoneString'
+                required: false
+                hint: 'This will be displayed after each event time. Set it for instance to " UTC" to indicate UTC times or a specific time zone, ie  America/New_York. You can also instead used a translated string per language'
+                widget: 'string'
+                default: "15:04 — Jan 2"
+              - label: 'Logo path'
+                name: 'logo'
+                required: false
+                hint: 'Path to your logo image, relative to the site root, ie: /images/my-logo.png. You can leave empty as well and only use a header text.'
+                widget: 'string'
+                default: "/images/clearstatus.svg"
+              - label: 'Meta description'
+                name: 'meta_description'
+                required: false
+                hint: 'Invisible meta tag to describe your status page. Read by search engines for instance. You should probably include your name in it.'
+                widget: 'text'
+                default: "This status page provides updated information about our systems normal operation, incidents that may happen and their resolution."
+              - label: 'Header description'
+                name: 'description_header'
+                required: false
+                hint: 'Full text to be displayed at the top of the status page.'
+                widget: 'text'
+                default: "Information about <a class='text-grey-darkest' title='Visit example.com' href='https://www.example.com/'>example</a> systems operations.<br />Follow us <a class='text-grey-darkest' title='Visit our page on Twitter' href='https://www.twitter.com/example'>on Twitter</a> or subscribe to <a href='%s'>RSS</a><br />to be alerted of new events."
+              - label: 'Footer description'
+                name: 'description_footer'
+                required: false
+                hint: 'Text to be displayed at the bottom of the status page'
+                widget: 'text'
+                default: "<a class='text-grey-darkest' title='Visit example.com' href='https://www.example.com/'>Example.com</a> provides open-source software for all kind of sectors."
+              - label: 'Copyright holder'
+                name: 'copyrightHolder'
+                required: false
+                hint: 'The entity which owns the status page.'
+                widget: 'string'
+                default: "Example Inc."
+              - label: 'Disqus shortname'
+                name: 'disqusShortname'
+                required: false
+                hint: 'Disqus commenting: set your Disqus shortname here. Leave emtpy for no discussion at all. You can then enable/disable discussions per issue'
+                widget: 'string'
+                default: ""
+              - label: 'Events per page'
+                name: 'eventsPerPage'
+                hint: 'How many events to display per page in the Past events section'
+                widget: 'number'
+                default: 10
+                valueType: "int"
+                min: 3
+                max: 30

@@ -1,0 +1,220 @@
+{{ partial "meta" . }}
+
+{{ $incidents := where .Site.RegularPages "Params.section" "issue" }}
+
+{{ $topPinnedIssues := where $incidents "Params.pinned" "eq" "top"}}
+{{ $belowheaderPinnedIssues := where $incidents "Params.pinned" "eq" "belowheader"}}
+
+{{ $pastIncidents := where $incidents "Params.status" "=" "resolved" }}
+{{ $pastIncidents := $pastIncidents | complement $topPinnedIssues $belowheaderPinnedIssues }}
+
+{{ $active := where $incidents "Params.status" "=" "in_progress" }}
+{{ $active := $active | complement $topPinnedIssues $belowheaderPinnedIssues }}
+
+{{ $scheduled := where $incidents "Params.status" "=" "scheduled" }}
+{{ $scheduled := $scheduled | complement $topPinnedIssues $belowheaderPinnedIssues }}
+
+{{ $isMaintenance := where $active "Params.current_severity" "=" "maintenance" }}
+{{ $isMonitoring := where $active "Params.current_severity" "=" "monitoring" }}
+{{ $isDisrupted := where $active "Params.current_severity" "=" "disrupted" }}
+{{ $isDown := where $active "Params.current_severity" "=" "down" }}
+
+{{ $globalSeverityBgColor := .Site.Params.DefaultSeverityBackground }}
+{{ $globalSeverityColor := .Site.Params.DefaultSeverityColor }}
+{{ $globalMessage := T "isOk" }}
+{{ if $isDown }}
+    {{ $globalSeverityBgColor = .Site.Params.DownSeverityBackground }}
+    {{ $globalSeverityColor = .Site.Params.DownSeverityColor }}
+    {{ $globalMessage = T "isDown" }}
+{{ else if $isDisrupted }}
+    {{ $globalSeverityBgColor = .Site.Params.DisruptedSeverityBackground }}
+    {{ $globalSeverityColor = .Site.Params.DisruptedSeverityColor }}
+    {{ $globalMessage = T "isDisrupted" }}
+{{ else if $isMonitoring }}
+  {{ $globalSeverityBgColor = .Site.Params.MonitoringSeverityBackground }}
+  {{ $globalSeverityColor = .Site.Params.MonitoringSeverityColor }}
+  {{ $globalMessage = T "isMonitoring" }}
+{{ else if $isMaintenance }}
+  {{ $globalSeverityBgColor = .Site.Params.MaintenanceSeverityBackground }}
+  {{ $globalSeverityColor = .Site.Params.MaintenanceSeverityColor }}
+  {{ $globalMessage = T "isMaintenance" }}
+{{ else }}
+  {{ $globalSeverityBgColor = .Site.Params.OkSeverityBackground }}
+  {{ $globalSeverityColor = .Site.Params.OkSeverityColor }}
+  {{ $globalMessage = T "isOk" }}
+{{ end }}
+
+{{ $isScheduled := eq .Params.status "scheduled" }}
+{{ $isResolved := eq .Params.status "resolved" }}
+
+  <body class="clearstatus-single {{ .Site.Params.BodyBackground }} pt-4">
+
+    {{ if $topPinnedIssues }}
+    <div class="container w-full max-w-lg mx-auto px-4 mb-4">
+        {{ range $topPinnedIssues }}
+        {{ .Render "pinned" }}
+        {{ end }}
+    </div>
+    {{ end }}
+
+    {{ partial "header" . }}
+
+    {{ if $belowheaderPinnedIssues }}
+    <div class="container w-full max-w-lg mx-auto px-4 mb-8">
+        {{ range $belowheaderPinnedIssues }}
+        {{ .Render "pinned" }}
+        {{ end }}
+    </div>
+    {{ end }}
+
+    <div class="container w-full max-w-lg mx-auto px-4 mb-4 text-center">
+        <a class="text-black bg-grey-light rounded-sm px-3 py-2 no-underline" href="/" title="Back to list of events">{{ T "backToList" }}</a>
+    </div>
+
+    <div class="container w-full max-w-lg mx-auto p-4">
+
+        {{ $statusParams := (dict "globalMessage" $globalMessage "severityColor" $globalSeverityColor "severityBgColor" $globalSeverityBgColor "context" .) }}
+        {{ partial "globalstatus" $statusParams }}
+
+        {{ $severityBgColor := .Site.Params.DefaultSeverityBackground }}
+        {{ $severityColor := .Site.Params.DefaultSeverityColor }}
+        {{ if $isScheduled }}
+            {{ $severityBgColor = .Site.Params.scheduledHeaderBackground }}
+            {{ $severityColor = .Site.Params.scheduledHeaderTitleColor }}
+        {{ else if ne $isResolved true }}
+            {{ if eq .Params.current_severity "down" }}
+                {{ $severityBgColor = .Site.Params.DownSeverityBackground }}
+                {{ $severityColor = .Site.Params.DownSeverityColor }}
+            {{ else if eq .Params.current_severity "disrupted" }}
+                {{ $severityBgColor = .Site.Params.DisruptedSeverityBackground }}
+                {{ $severityColor = .Site.Params.DisruptedSeverityColor }}
+            {{ else if eq .Params.current_severity "monitoring" }}
+                {{ $severityBgColor = .Site.Params.MonitoringSeverityBackground }}
+                {{ $severityColor = .Site.Params.MonitoringSeverityColor }}
+            {{ end }}
+        {{ end }}
+        {{ $dateFormat := "January 2, 2006 at 3:04 PM" }}
+        {{ if .Site.Params.dateFormat }}
+        {{ $dateFormat = .Site.Params.dateFormat }}
+        {{ end }}
+
+        <div class="max-w-lg w-full lg:flex shadow-md {{ .Site.Params.SmallBodyColor }} rounded flex flex-col justify-between leading-normal mb-8 text-sm md:text-lg">
+
+            <div class="{{ $severityBgColor }} rounded-t flex items-center justify-between px-4 py-2">
+                <time datetime="{{ .Date }}" class="py-1 no-underline {{ $severityColor }}">
+                    {{ .Date.Format $dateFormat }}{{ .Site.Params.TimezoneString }}{{ i18n "timezoneString" }}
+                </time>
+
+                {{ if eq .Params.status "scheduled" }}
+                <div class="flex flex-col justify-between text-center">
+                    <span class="bg-white rounded text-grey-darker px-3 py-1 mt-2">{{ T "scheduled" }}</span>
+                    <span class="text-grey-darker pt-1">{{ .Params.duration }}</span>
+                </div>
+                {{ end }}
+
+                {{ if eq .Params.status "resolved" }}
+
+                {{ $t := (time .Params.resolved_on) }}
+                {{ $timeDiff := (sub $t.Unix .Date.Unix) }}
+                {{ $diffInMin := (div $timeDiff 60) }}
+
+                <span class="bg-white rounded text-black text-lg px-3 py-1 ml-2">
+                {{ if lt $timeDiff 60 }}
+                    <span class="text-green-dark">
+                    {{ T "inUnderAMinute" }}
+                    </span>
+                {{ else }}
+                      {{ if gt $timeDiff 3600 }}
+                        <span class="text-red-dark">
+                          {{ $minutesForCalc := (mod $diffInMin 60) }}
+
+                          {{ div (sub $diffInMin $minutesForCalc) 60 }}h
+                          {{ $minutesForCalc }}m
+                        </span>
+                      {{ else }}
+                        <span class="text-orange-dark">
+                          {{ $secsForCalc := (mod $timeDiff 60) }}
+
+                          {{ div (sub $timeDiff $secsForCalc) 60 }}m
+                        </span>
+                      {{ end }}
+                {{ end }}
+
+                </span>
+
+                {{ end }}
+
+            </div>
+
+            <div class="{{ .Site.Params.SmallBodyBackground }} md:flex justify-between p-4">
+                <div>
+                    <div class="font-bold text-xl my-2 {{ .Site.Params.ScheduledBodyTitleColor }}">{{ .Title }}</div>
+                    <div class="my-4">{{ .Content | safeHTML }}</div>
+                </div>
+                {{ with .Params.twitterFeed }}
+                {{ if eq $.Params.status "in_progress"}}
+                <div class="md:w-1/2 flex-none mx-2 mt-4 border">
+                    <a class="twitter-timeline" data-height="400" data-dnt="true" href="{{ . }}">Loading Tweets...</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                </div>
+                {{ end }}
+                {{ end }}
+            </div>
+
+            <div class="flex items-center justify-between {{ .Site.Params.SmallBodyBackground }} rounded-b px-4 pb-4 pr-4">
+                <div class="max-w-xs leading-loose mr-2">
+                    {{ range .Params.Affected }}
+                    <span class="rounded px-3 py-1 text-sm mr-1 flex-none {{ $.Site.Params.AffectedBackground }} {{ $.Site.Params.AffectedColor }}">{{ . }}</span>
+                    {{ end }}
+                </div>
+                <div class="ml-2 pt-2 pb-4 text-center">
+                    {{ $itemsCount := len .Params.Affected }}
+                    {{ $text := ""}}
+                    {{ $severity := ""}}
+                    {{ if $isScheduled }}
+                        {{ $text = T "willBe" }}
+                        {{ if gt $itemsCount 1 }}
+                        {{ $text = T "willBePlural"}}
+                        {{ end }}
+                        {{ $severity = T .Params.max_severity }}
+                    {{ else if $isResolved }}
+                        {{ $text = T "was" }}
+                        {{ if gt $itemsCount 1 }}
+                        {{ $text = T "were"}}
+                        {{ end }}
+                        {{ $severity = T .Params.max_severity }}
+                    {{ else }}
+                        {{ $text = T "is" }}
+                        {{ if gt $itemsCount 1 }}
+                        {{ $text = T "are"}}
+                        {{ end }}
+                        {{ $severity = T .Params.current_severity }}
+                    {{ end }}
+                    <p class="text-sm mb-1">{{ $text }}</p>
+                    <p class="{{ $severityColor }} {{ $severityBgColor }} rounded px-3 py-2 font-semibold">{{ $severity }}</p>
+                </div>
+            </div>
+        </div>
+        {{ partial "comments.html" . }}
+    </div>
+
+    <div class="container w-full max-w-lg mx-auto mb-4 px-4 pb-4 text-center">
+        <a class="text-black bg-grey-light rounded-sm px-3 py-2 no-underline" href="/" title="Back to list of events">{{ T "backToList" }}</a>
+    </div>
+
+  {{ partial "footer" . }}
+  {{ partial "js" . }}
+  {{ if .Site.Params.EnableNetlifyCMSSupport }}
+    <script>
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", function(user) {
+                if (!user) {
+                    window.netlifyIdentity.on("login", function() {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+        }
+    </script>
+  {{ end}}
+  </body>
+</html>

@@ -1,0 +1,61 @@
+{{ $t := (time .Params.date) }}
+
+{{ $severityBgColor := .Site.Params.DefaultSeverityBackground }}
+{{ $severityColor := .Site.Params.DefaultSeverityColor }}
+{{ if eq .Params.max_severity "down" }}
+  {{ $severityBgColor = .Site.Params.DownSeverityBackground }}
+  {{ $severityColor = .Site.Params.DownSeverityColor }}
+{{ else if eq .Params.max_severity "disrupted" }}
+  {{ $severityBgColor = .Site.Params.DisruptedSeverityBackground }}
+  {{ $severityColor = .Site.Params.DisruptedSeverityColor }}
+{{ else if eq .Params.max_severity "monitoring" }}
+  {{ $severityBgColor = .Site.Params.MonitoringSeverityBackground }}
+  {{ $severityColor = .Site.Params.MonitoringSeverityColor }}
+{{ end }}
+
+{{ $dateFormat := "January 2, 2006 at 3:04 PM" }}
+{{ if .Site.Params.dateFormat }}
+{{ $dateFormat = .Site.Params.dateFormat }}
+{{ end }}
+{{ $dateMachineFormat := " 2006-01-23 14:54" }}
+
+<div class="max-w-lg w-full lg:flex shadow-md  {{ .Site.Params.ScheduledBodyColor }} rounded flex flex-col justify-between leading-normal mb-8 text-sm md:text-lg">
+
+    <div class="{{ .Site.Params.ScheduledHeaderBackground }} {{ .Site.Params.ScheduledHeaderColor }} rounded-t flex items-center px-4 py-2 justify-between">
+        <a class="py-1 md:flex items-center no-underline {{ .Site.Params.ScheduledHeaderTitleColor }} text-black" href="{{ .Permalink }}">
+            <time datetime="{{ .Date }}">{{ .Date.Format $dateFormat }}{{ .Site.Params.TimezoneString }}{{ i18n "timezoneString" }}</time>
+            <span class="flex items-center md:ml-2">
+                <svg aria-hidden="true" class="fill-current md:ml-4" xmlns="http://www.w3.org/2000/svg"  width="18" viewBox="0 0 512 512"><path d="M74.6 256c0-38.3 31.1-69.4 69.4-69.4h88V144h-88c-61.8 0-112 50.2-112 112s50.2 112 112 112h88v-42.6h-88c-38.3 0-69.4-31.1-69.4-69.4zm85.4 22h192v-44H160v44zm208-134h-88v42.6h88c38.3 0 69.4 31.1 69.4 69.4s-31.1 69.4-69.4 69.4h-88V368h88c61.8 0 112-50.2 112-112s-50.2-112-112-112z"/></svg>
+                {{ partial "commentscount" . }}
+            </span>
+        </a>
+
+        <div class="flex flex-col justify-between text-center">
+            <span class="bg-white rounded text-grey-darker px-3 py-1 mt-2">{{ T "scheduled" }}</span>
+            <span class="text-grey-darker pt-1">{{ .Params.duration }}</span>
+        </div>
+
+    </div>
+
+    <div class="p-4 {{ .Site.Params.ScheduledBodyBackground }}">
+        <div class="font-bold text-xl my-2 {{ .Site.Params.ScheduledBodyTitleColor }}">{{ .Title }}</div>
+        <div class="my-4">{{ .Content | safeHTML }}</div>
+    </div>
+
+    <div class="flex items-center justify-between {{ .Site.Params.ScheduledBodyBackground }} rounded-b px-4 pb-4 pr-4">
+        <div class="max-w-xs text-right leading-loose mr-2">
+            {{ range .Params.Affected }}
+            <span class="rounded px-3 py-1 text-sm mr-1 {{ $.Site.Params.AffectedBackground }} {{ $.Site.Params.AffectedColor }}">{{ . }}</span>
+            {{ end }}
+        </div>
+        <div class="ml-2 pt-2 pb-4 text-center">
+            {{ $itemsCount := len .Params.Affected }}
+            {{ $text := T "willBe" }}
+            {{ if gt $itemsCount 1 }}
+            {{ $text = T "willBePlural"}}
+            {{ end }}
+            <p class="text-sm mb-1">{{ $text }}</p>
+            <p class="{{ $severityBgColor }}  {{ $severityColor }} rounded px-3 py-2 font-semibold">{{ T .Params.max_severity }}</p>
+        </div>
+    </div>
+</div>
